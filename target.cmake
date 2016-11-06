@@ -4,7 +4,7 @@ function(AddTarget)
 		NAME
 		TYPE
 		SOURCE_DIR
-	    OUTPUT_NAME)
+		OUTPUT_NAME)
 	set(__multi_val
 		DEPENDENCIES
 		INCLUDE_DIRS
@@ -30,6 +30,9 @@ function(AddTarget)
 	message(STATUS "> Creating ${AddTarget_TYPE} with name: ${AddTarget_NAME}")
 	if(AddTarget_TYPE STREQUAL app)
 		add_executable("${AddTarget_NAME}" "${AddTarget_SRC}")
+	elseif(AddTarget_TYPE STREQUAL test)
+		enable_testing()
+		add_executable("${AddTarget_NAME}" "${AddTarget_SRC}")
 	elseif(AddTarget_TYPE STREQUAL static_lib)
 		add_library("${AddTarget_NAME}" STATIC "${AddTarget_SRC}")
 	elseif(AddTarget_TYPE STREQUAL shared_lib)
@@ -41,8 +44,11 @@ function(AddTarget)
 	endif(AddTarget_OUTPUT_NAME)
 
 	if(AddTarget_CMAKE)
-		foreach(find_item IN LISTS AddTarget)
+		foreach(find_item IN LISTS AddTarget_CMAKE)
 			find_package(${find_item} REQUIRED)
+			if(${find_item} STREQUAL "GTest")
+				list(APPEND __extra_link_libraries ${GTEST_BOTH_LIBRARIES})
+			endif(${find_item} STREQUAL "GTest")
 		endforeach(find_item IN LISTS AddTarget)
 	endif(AddTarget_CMAKE)
 
@@ -98,4 +104,8 @@ function(AddTarget)
 		list(REMOVE_DUPLICATES __extra_link_libraries)
 		target_link_libraries("${AddTarget_NAME}" "${__extra_link_libraries}")
 	endif(__extra_link_libraries)
+
+	if(AddTarget_TYPE STREQUAL test)
+		add_test(AllTestsIn${AddTarget_NAME} "${AddTarget_NAME}")
+	endif()
 endfunction(AddTarget)
