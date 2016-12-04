@@ -54,7 +54,7 @@ function(AddTarget)
 
 	if(AddTarget_FIND_PKG)
 		foreach(pkg IN LISTS AddTarget_FIND_PKG)
-			PKG_SEARCH_MODULE(PC_LIBGIT2 libgit2)
+			PKG_SEARCH_MODULE(AddTarget_PKG_${AddTarget_FIND_PKG} ${AddTarget_FIND_PKG})
 		endforeach(pkg IN LISTS AddTarget_FIND_PKG)
 	endif(AddTarget_FIND_PKG)
 
