@@ -26,6 +26,7 @@ function(AddTarget)
 
 	file(GLOB_RECURSE AddTarget_SRC ${AddTarget_SOURCE_DIR}/*.c ${AddTarget_SOURCE_DIR}/*.cpp ${AddTarget_SOURCE_DIR}/*.h ${AddTarget_SOURCE_DIR}/*.hpp)
 	set(${AddTarget_NAME}__HEADERS_PATH "${AddTarget_SOURCE_DIR}" CACHE STRING "" FORCE)
+	list(APPEND __extra_headers "${BUILD_DIR}/generated")
 
 	message(STATUS "> Creating ${AddTarget_TYPE} with name: ${AddTarget_NAME}")
 	if(AddTarget_TYPE STREQUAL app)
@@ -96,6 +97,7 @@ function(AddTarget)
 	endif(__target_dependecies)
 
 	if(__extra_headers)
+		list(REMOVE_DUPLICATES __extra_headers)
 		target_include_directories(${AddTarget_NAME} PUBLIC ${__extra_headers})
 	endif(__extra_headers)
 
